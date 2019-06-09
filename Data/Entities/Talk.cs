@@ -1,4 +1,6 @@
-﻿namespace CoreCodeCamp.Data
+﻿using CoreCodeCamp.Data.Entities;
+
+namespace CoreCodeCamp.Data
 {
   public class Talk
   {
