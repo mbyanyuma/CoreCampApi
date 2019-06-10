@@ -261,5 +261,5 @@ __pycache__/
 *.pyc
 
 # ignore appsettings
-**/src/appsettings.json
-**/src/appsettings.Development.json
+**/appsettings.json
+**/appsettings.Development.json
