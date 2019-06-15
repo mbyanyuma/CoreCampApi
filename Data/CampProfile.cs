@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using CoreCodeCamp.Data.Entities;
 using CoreCodeCamp.Models;
 
 namespace CoreCodeCamp.Data
@@ -14,6 +15,10 @@ namespace CoreCodeCamp.Data
         {
             this.CreateMap<Camp, CampModel>()
                 .ForMember(c => c.Venue, o => o.MapFrom(m => m.Location.VenueName));
+
+            this.CreateMap<Talk, TalkModel>();
+
+            this.CreateMap<Speaker, SpeakerModel>();
         }
     }
 }

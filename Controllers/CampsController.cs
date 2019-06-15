@@ -32,10 +32,13 @@ namespace CoreCodeCamp.Controllers
                 CampModel[] model = _mapper.Map<CampModel[]>(results);
 
                 return Ok(model);
+
             }
-            catch (Exception)
+            catch (Exception msg)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Shockingly, our database failed");
+                Console.WriteLine(msg);
+                throw;
+                //return this.StatusCode(StatusCodes.Status500InternalServerError, "Shockingly, our database failed");
             }
 
         }
@@ -53,6 +56,26 @@ namespace CoreCodeCamp.Controllers
                 }
 
                 return _mapper.Map<CampModel>(result);
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Shockingly, our database failed");
+            }
+        }
+
+        [HttpGet("search")]
+        public async Task<ActionResult<CampModel[]>> SearchByDate(DateTime theDateTime, bool includeTalks = false)
+        {
+            try
+            {
+                var results = await _repository.GetAllCampsByEventDate(theDateTime, includeTalks);
+
+                if (!results.Any())
+                {
+                    return NotFound();
+                }
+
+                return _mapper.Map<CampModel[]>(results);
             }
             catch (Exception)
             {
