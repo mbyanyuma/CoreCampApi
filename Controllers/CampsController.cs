@@ -37,8 +37,8 @@ namespace CoreCodeCamp.Controllers
             catch (Exception msg)
             {
                 Console.WriteLine(msg);
-                throw;
-                //return this.StatusCode(StatusCodes.Status500InternalServerError, "Shockingly, our database failed");
+
+                return ReturnStatus500InternalServerError();
             }
 
         }
@@ -59,7 +59,7 @@ namespace CoreCodeCamp.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Shockingly, our database failed");
+                return ReturnStatus500InternalServerError();
             }
         }
 
@@ -79,7 +79,25 @@ namespace CoreCodeCamp.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Shockingly, our database failed");
+                return ReturnStatus500InternalServerError();
+            }
+        }
+
+        private ObjectResult ReturnStatus500InternalServerError()
+        {
+            return this.StatusCode(StatusCodes.Status500InternalServerError, "shockingly, our database failed");
+        }
+
+        public async Task<ActionResult<CampModel>> Post(CampModel model)
+        {
+            try
+            {
+                //create a new camp
+
+            }
+            catch (Exception)
+            {
+                return ReturnStatus500InternalServerError();
             }
         }
     }
