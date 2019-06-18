@@ -7,19 +7,23 @@ using CoreCodeCamp.Data;
 using CoreCodeCamp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 
 namespace CoreCodeCamp.Controllers
 {
     [Route("api/[controller]")]
+    [ApiController]
     public class CampsController : ControllerBase
     {
         private readonly ICampRepository _repository;
         private readonly IMapper _mapper;
+        private readonly LinkGenerator _linkGenerator;
 
-        public CampsController(ICampRepository repository, IMapper mapper)
+        public CampsController(ICampRepository repository, IMapper mapper, LinkGenerator linkGenerator)
         {
             _repository = repository;
             _mapper = mapper;
+            _linkGenerator = linkGenerator;
         }
 
         [HttpGet]
@@ -92,13 +96,29 @@ namespace CoreCodeCamp.Controllers
         {
             try
             {
+                var location = _linkGenerator.GetPathByAction("GetCamp", "Camps",
+                    new {moniker = model.Moniker});
+
+                if (string.IsNullOrWhiteSpace(location))
+                {
+                    return BadRequest("Cannot use the current moniker");
+                }
+
                 //create a new camp
+                var camp = _mapper.Map<Camp>(model);
+                _repository.Add(camp);
+                if (await _repository.SaveChangesAsync())
+                {
+                    return Created("", _mapper.Map<CampModel>(camp));
+                }
 
             }
             catch (Exception)
             {
                 return ReturnStatus500InternalServerError();
             }
+
+            return BadRequest();
         }
     }
 }
