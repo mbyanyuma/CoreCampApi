@@ -154,6 +154,31 @@ namespace CoreCodeCamp.Controllers
             return BadRequest();
         }
 
+        [HttpDelete("{moniker}")]
+        public async Task<IActionResult> Delete(string moniker)
+        {
+            try
+            {
+                var oldCamp = await _repository.GetCampAsync(moniker);
+                if (oldCamp == null)
+                {
+                    return NotFound($"Couldn't find the camp with a moniker of {moniker}");
+                }
+
+                _repository.Delete(oldCamp);
+                if (await _repository.SaveChangesAsync())
+                {
+                    return Ok();
+                }
+            }
+            catch (Exception)
+            {
+                return ReturnStatus500InternalServerError();
+            }
+
+            return BadRequest();
+        }
+
 
     }
 }
