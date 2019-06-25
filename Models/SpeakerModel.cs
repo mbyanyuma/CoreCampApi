@@ -2,6 +2,7 @@
 {
     public class SpeakerModel
     {
+        public int SpeakerId { get; set; }
         public string SpeakerFirstName { get; set; }
         public string SpeakerLastName { get; set; }
         public string SpeakerMiddleName { get; set; }
