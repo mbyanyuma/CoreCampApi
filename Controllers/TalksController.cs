@@ -39,6 +39,10 @@ namespace CoreCodeCamp.Controllers
             try
             {
                 var talks = await _repository.GetTalksByMonikerAsync(moniker, true);
+                if (talks == null)
+                {
+                    return NotFound();
+                }
                 return _mapper.Map<TalkModel[]>(talks);
             }
             catch (Exception)
@@ -138,6 +142,36 @@ namespace CoreCodeCamp.Controllers
                 {
                     return BadRequest("Failed to update the database fam, p.s man utd > liverpool any day");
                 }
+            }
+            catch (Exception)
+            {
+                return ReturnStatus500InternalServerError();
+            }
+        }
+
+        [HttpDelete("{int: id}")]
+        public async Task<ActionResult> Delete(string moniker, int id)
+        {
+            try
+            {
+                var talk = await _repository.GetTalkByMonikerAsync(moniker, id);
+                if (talk == null)
+                {
+                    return NotFound("failed to find the talk to delete");
+                }
+
+                _repository.Delete(talk);
+
+                if (await _repository.SaveChangesAsync())
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("failed to delete the talk");
+                }
+
+                
             }
             catch (Exception)
             {
