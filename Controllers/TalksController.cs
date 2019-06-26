@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using AutoMapper;
 using CoreCodeCamp.Data;
@@ -37,7 +38,7 @@ namespace CoreCodeCamp.Controllers
         {
             try
             {
-                var talks = await _repository.GetTalksByMonikerAsync(moniker);
+                var talks = await _repository.GetTalksByMonikerAsync(moniker, true);
                 return _mapper.Map<TalkModel[]>(talks);
             }
             catch (Exception)
@@ -103,6 +104,45 @@ namespace CoreCodeCamp.Controllers
             }
 
             return BadRequest();
+        }
+
+        [HttpPut("{int: id}")]
+        public async Task<ActionResult<TalkModel>> Put(string moniker, int id, TalkModel model)
+        {
+            try
+            {
+                var talk = await _repository.GetTalkByMonikerAsync(moniker, id, true);
+                if (talk == null)
+                {
+                    return NotFound("Couldn't find the talk");
+                }
+
+                _mapper.Map(model, talk);
+
+                if (model.Speaker != null)
+                {
+                    var speaker = await _repository.GetSpeakerAsync(model.Speaker.SpeakerId);
+                    if (speaker != null)
+                    {
+                        talk.Speaker = speaker;
+                    }
+                }
+
+                
+
+                if (await _repository.SaveChangesAsync())
+                {
+                    return _mapper.Map<TalkModel>(talk);
+                }
+                else
+                {
+                    return BadRequest("Failed to update the database fam, p.s man utd > liverpool any day");
+                }
+            }
+            catch (Exception)
+            {
+                return ReturnStatus500InternalServerError();
+            }
         }
 
     }
